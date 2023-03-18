@@ -987,6 +987,7 @@ GameObject:
   - component: {fileID: 221633756}
   - component: {fileID: 221633758}
   - component: {fileID: 221633757}
+  - component: {fileID: 221633759}
   m_Layer: 5
   m_Name: TMP_Time_Num
   m_TagString: Untagged
@@ -1111,6 +1112,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 221633755}
   m_CullTransparentMesh: 1
+--- !u!114 &221633759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 221633755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6aa17ab9efa180f4ab833d34229f0ecc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &261043048
 GameObject:
   m_ObjectHideFlags: 0
@@ -2320,7 +2333,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mMaxTime: 30
-  mpTmpCurrentTime: {fileID: 221633757}
   mpTmpCurrentHitCount: {fileID: 767491066}
   mpTmpCurrentScore: {fileID: 1650363690}
   mpObjBackgroundArtSets:

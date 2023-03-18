@@ -8,13 +8,18 @@ using UnityEngine.Events;
 
 public class WamMoleSlapGamemode : MonoBehaviour
 {
+
+    /* デリゲート宣言（タイマーカウントダウン） */
+    public delegate void OnTimerCountdownDelegate( ushort Time );
+    /* デリゲート定義（タイマーカウントダウン） */
+    public OnTimerCountdownDelegate OnTimerCountdown;
+
+    /* インスタンスを取得する */
+    public static WamMoleSlapGamemode GetInstance( ) { return mpInstance; }
+
     /* 最大制限時間 */
     [field: SerializeField, Label( "最大制限時間" ), Tooltip( "ゲーム開始時の最大制限時間" ), Range( 0 , 65535 )]
     private ushort mMaxTime;
-
-    /* テキストメッシュプロ（現在時間） */
-    [field: SerializeField, Label( "テキストUI（現在時間）" ), Tooltip( "現在時間を表示するテキストUI" )]
-    private TextMeshProUGUI mpTmpCurrentTime;
 
     /* テキストメッシュプロ（叩いた回数） */
     [field: SerializeField, Label( "テキストUI（叩いた回数）" ), Tooltip( "もぐらを叩いた回数を表示するテキストUI" )]
@@ -52,6 +57,12 @@ public class WamMoleSlapGamemode : MonoBehaviour
     [field: SerializeField, Label( "もぐら間の最小生成距離" ), Tooltip( "前回生成されたもぐらから空ける最小距離" ), Range( 0.0f , 10000.0f )]
     private float mMoleSpawnDistanceMin;
 
+    /* インスタンス */
+    private static WamMoleSlapGamemode mpInstance;
+
+    /* 初期化したかどうか */
+    private bool mbInitialized;
+
     /* 現在時間 */
     private ushort mCurrentTime;
 
@@ -79,6 +90,15 @@ public class WamMoleSlapGamemode : MonoBehaviour
     /* もぐら間の現在の生成距離 */
     private float mMoleSpawnDistance;
 
+    public void Awake( )
+    {
+        /* インスタンスを保存 */
+        if ( mpInstance == null )
+        {
+            mpInstance = this;
+        }
+    }
+
     // Start is called before the first frame update
     public void Start( )
     {
@@ -87,9 +107,6 @@ public class WamMoleSlapGamemode : MonoBehaviour
 
         /* スコアテキストを初期化する */
         this.mpTmpCurrentScore.SetText( "0" );
-
-        /* 現在時間テキストに最大制限時間を設定する */
-        this.mpTmpCurrentTime.SetText( this.mMaxTime.ToString( ) );
 
         /* 現在時間を最大制限時間に設定 */
         this.mCurrentTime = this.mMaxTime;
@@ -144,6 +161,16 @@ public class WamMoleSlapGamemode : MonoBehaviour
             return;
         }
 
+        /* 初期化していない場合 */
+        if ( !this.mbInitialized )
+        {
+            /* 現在時間テキストに最大制限時間を設定する */
+            this.OnTimerCountdown( this.mMaxTime );
+
+            /* 初期化済みとする */
+            this.mbInitialized = true;
+        }
+
         /* フレーム時間を加算 */
         this.mFlameTime += Time.deltaTime;
 
@@ -157,7 +184,7 @@ public class WamMoleSlapGamemode : MonoBehaviour
             this.mCurrentTime--;
 
             /* テキストに現在時間を設定する */
-            this.mpTmpCurrentTime.SetText( this.mCurrentTime.ToString( ) );
+            this.OnTimerCountdown( this.mCurrentTime );
         }
 
         /* もぐら生成までの現在のインターバル時間が、指定時間に到達していない場合 */
