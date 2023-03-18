@@ -18,13 +18,14 @@ public class WamMoleSlapGamemode : MonoBehaviour
     /* デリゲート定義（スコア変動） */
     public OnScoreUpdateDelegate OnScoreUpdate;
 
+    /* デリゲート宣言（もぐらを叩いた回数変動） */
+    public delegate void OnMoleSlapCountUpdateDelegate( uint Count );
+    /* デリゲート定義（もぐらを叩いた回数変動） */
+    public OnMoleSlapCountUpdateDelegate OnMoleSlapCountUpdate;
+
     /* 最大制限時間 */
     [field: SerializeField, Label( "最大制限時間" ), Tooltip( "ゲーム開始時の最大制限時間" ), Range( 0 , 65535 )]
     private ushort mMaxTime;
-
-    /* テキストメッシュプロ（叩いた回数） */
-    [field: SerializeField, Label( "テキストUI（叩いた回数）" ), Tooltip( "もぐらを叩いた回数を表示するテキストUI" )]
-    private TextMeshProUGUI mpTmpCurrentHitCount;
 
     /* 背景セット */
     [field: SerializeField, Label( "背景セット" ), Tooltip( "ゲームプレイ中の背景絵" )]
@@ -53,6 +54,14 @@ public class WamMoleSlapGamemode : MonoBehaviour
     /* もぐら間の最小生成距離 */
     [field: SerializeField, Label( "もぐら間の最小生成距離" ), Tooltip( "前回生成されたもぐらから空ける最小距離" ), Range( 0.0f , 10000.0f )]
     private float mMoleSpawnDistanceMin;
+
+    /* 情報ヘッダーUI */
+    [field: SerializeField, Label( "情報ヘッダーUI" ), Tooltip( "ゲームプレイ中の情報が表示されるUI" )]
+    private GameObject mpObjInfoUI;
+
+    /* リザルトUI */
+    [field: SerializeField, Label( "リザルトUI" ), Tooltip( "制限時間終了後に表示されるリザルトUI" )]
+    private GameObject mpObjResultUI;
 
     /* インスタンス */
     private static WamMoleSlapGamemode mpInstance;
@@ -90,6 +99,12 @@ public class WamMoleSlapGamemode : MonoBehaviour
     /* 現在のスコア */
     private uint mCurrentScore;
 
+    /* 現在のもぐらを叩いた回数 */
+    private uint mCurrentSlapCount;
+
+    /* リザルト中かどうか */
+    private bool mbResult;
+
     /* インスタンスを取得する */
     public static WamMoleSlapGamemode GetInstance( )
     {
@@ -108,9 +123,6 @@ public class WamMoleSlapGamemode : MonoBehaviour
     // Start is called before the first frame update
     public void Start( )
     {
-        /* 叩いた回数テキストを初期化する */
-        this.mpTmpCurrentHitCount.SetText( "0" );
-
         /* 現在時間を最大制限時間に設定 */
         this.mCurrentTime = this.mMaxTime;
 
@@ -125,6 +137,12 @@ public class WamMoleSlapGamemode : MonoBehaviour
 
         /* 現在のスコアを初期化 */
         this.mCurrentScore = 0;
+
+        /* 現在のもぐらを叩いた回数を初期化 */
+        this.mCurrentSlapCount = 0;
+
+        /* リザルト中かどうかを初期化 */
+        this.mbResult = false;
 
         /* 生成したもぐらプレハブを初期化 */
         this.mpCurrentMole = null;
@@ -155,6 +173,39 @@ public class WamMoleSlapGamemode : MonoBehaviour
 
         /* もぐら生成までのランダム延長インターバル時間を取得する */
         this.mRandomExtSpawnIntervalTime = Random.Range( 0.0f , this.mMoleSpawnIntavalMaxExt );
+
+
+        /* 情報ヘッダーUIが空なら */
+        if ( this.mpObjInfoUI == null )
+        {
+            Debug.Log( "[Error] <WamMoleSlapGamemode> Info UI is null." );
+            return;
+        }
+
+        /* 情報ヘッダーUIを表示 */
+        this.mpObjInfoUI.SetActive( true );
+
+        /* リザルトUIが空なら */
+        if ( this.mpObjResultUI == null )
+        {
+            Debug.Log( "[Error] <WamMoleSlapGamemode> Result UI is null." );
+            return;
+        }
+
+        if ( this.mpObjResultUI.GetComponent<CanvasGroup>( ) == null )
+        {
+            Debug.Log( "[Error] <WamMoleSlapGamemode> Result UI is not add CanvasGroup component." );
+            return;
+        }
+
+        /* リザルトUIを表示 */
+        this.mpObjResultUI.SetActive( true );
+
+        /* リザルトUIの当たり判定を無くす */
+        this.mpObjResultUI.GetComponent<CanvasGroup>( ).blocksRaycasts = false;
+
+        /* リザルトUIを透明度0にする */
+        this.mpObjResultUI.GetComponent<CanvasGroup>( ).alpha = 0.0f;
     }
 
     // Update is called once per frame
@@ -163,7 +214,34 @@ public class WamMoleSlapGamemode : MonoBehaviour
         /* もし現在時間が0秒以下なら */
         if ( this.mCurrentTime <= 0 )
         {
-            Debug.Log( "[Notice] <WamMoleSlapGamemode> Time up." );
+            /* 直前までリザルト中でなかった場合 */
+            if ( !this.mbResult )
+            {
+                /* リザルト中とする */
+                this.mbResult = true;
+
+                /* 情報ヘッダーUIが空なら */
+                if ( this.mpObjInfoUI == null )
+                {
+                    Debug.Log( "[Error] <WamMoleSlapGamemode> Info UI is null." );
+                    return;
+                }
+
+                /* リザルトUIが空なら */
+                if ( this.mpObjResultUI == null )
+                {
+                    return;
+                }
+
+                /* 情報ヘッダーUIを非表示 */
+                this.mpObjInfoUI.SetActive( false );
+
+                /* リザルトUIの当たり判定を復活させる */
+                this.mpObjResultUI.GetComponent<CanvasGroup>( ).blocksRaycasts = true;
+
+                /* リザルトUIを透明度1にする */
+                this.mpObjResultUI.GetComponent<CanvasGroup>( ).alpha = 1.0f;
+            }
             return;
         }
 
@@ -175,6 +253,9 @@ public class WamMoleSlapGamemode : MonoBehaviour
 
             /* 現在スコアが初期化されたことを通知 */
             this.OnScoreUpdate( 0 );
+
+            /* 現在もぐらを叩いた回数が初期化されたことを通知 */
+            this.OnMoleSlapCountUpdate( 0 );
 
             /* 初期化済みとする */
             this.mbInitialized = true;
@@ -274,5 +355,11 @@ public class WamMoleSlapGamemode : MonoBehaviour
 
         /* スコアが変動したことを通知 */
         this.OnScoreUpdate( this.mCurrentScore );
+
+        /* 現在のもぐらを叩いた回数を加算 */
+        this.mCurrentSlapCount++;
+
+        /* もぐらを叩いた回数が変動したことを通知 */
+        this.OnMoleSlapCountUpdate( this.mCurrentSlapCount );
     }
 }

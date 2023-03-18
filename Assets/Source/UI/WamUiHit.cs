@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class WamUiScore : MonoBehaviour
+public class WamUiHit : MonoBehaviour
 {
     // Start is called before the first frame update
     public void Start()
@@ -11,12 +11,12 @@ public class WamUiScore : MonoBehaviour
         /* ゲームモードクラスのインスタンスが空なら */
         if ( WamMoleSlapGamemode.GetInstance( ) == null )
         {
-            Debug.Log( "[Error] <WamUiScore> WamMoleSlapGamemode instance is null." );
+            Debug.Log( "[Error] <WamUiHit> WamMoleSlapGamemode instance is null." );
             return;
         }
 
-        /* スコア変動のデリゲートを登録 */
-        WamMoleSlapGamemode.GetInstance( ).OnScoreUpdate += OnScoreUpdate;
+        /* もぐらを叩いた回数変動のデリゲートを登録 */
+        WamMoleSlapGamemode.GetInstance( ).OnMoleSlapCountUpdate += OnMoleSlapCountUpdate;
     }
 
     // Update is called once per frame
@@ -25,17 +25,17 @@ public class WamUiScore : MonoBehaviour
         
     }
 
-    /* デリゲートバインド関数（スコア変動） */
-    private void OnScoreUpdate( uint Score )
+    /* デリゲートバインド関数（もぐらを叩いた回数変動） */
+    private void OnMoleSlapCountUpdate( uint Count )
     {
         /* このスクリプトがアタッチされているゲームオブジェクトに、テキストメッシュプロUGUIが追加されていない場合 */
         if ( this.GetComponent<TextMeshProUGUI>( ) == null )
         {
-            Debug.Log( "[Error] <WamUiScore> " + this.name + " is not add TextMeshProUGUI component." );
+            Debug.Log( "[Error] <WamUiHit> " + this.name + " is not add TextMeshProUGUI component." );
             return;
         }
 
-        /* 現在スコアを更新する */
-        this.GetComponent<TextMeshProUGUI>( ).SetText( Score.ToString( ) );
+        /* 現在のもぐらを叩いた回数を更新する */
+        this.GetComponent<TextMeshProUGUI>( ).SetText( Count.ToString( ) );
     }
 }
