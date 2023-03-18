@@ -1,10 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
+using UniRx.Triggers;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class WamCharacterMole : MonoBehaviour
 {
+    /* タップターゲット（もぐら） */
+    [field: SerializeField, Label( "タップターゲット（もぐら）" ), Tooltip( "タップで倒す事が可能なもぐらオブジェクト" )]
+    private GameObject mpObjMoleTapTarget;
+
+    /* もぐらを倒した時に貰えるスコア */
+    [field: SerializeField, Label( "もぐらを倒した時に貰えるスコア" ), Tooltip( "もぐらを倒した時に貰えるスコア" ), Range( 0 , 65535 )]
+    private ushort mDefeatedScore;
+
     /* アニメーターステート名（放置） */
     [field: SerializeField, Label( "アニメーターステート名（放置）" ), Tooltip( "もぐらが放置されている時のアニメーターステート名" )]
     private string mStateNameIdle;
@@ -37,6 +47,12 @@ public class WamCharacterMole : MonoBehaviour
     /* 放置ステートから遷移開始するまでのランダム延長時間 */
     private float mStateIdleWaitTimeRandomExt;
 
+    /* UniRxイベントハンドリング */
+    private ObservableEventTrigger mpUniRxEventTrigger;
+
+    /* もぐらが倒されたかどうか */
+    private bool mbDefeat;
+
     // Start is called before the first frame update
     public void Start()
     {
@@ -49,6 +65,26 @@ public class WamCharacterMole : MonoBehaviour
             Debug.Log( "[Error] <WamCharacterMole> Animator component is null." );
             return;
         }
+
+        /* タップターゲットが空の場合 */
+        if ( this.mpObjMoleTapTarget == null )
+        {
+            Debug.Log( "[Error] <WamCharacterMole> Tap target is null." );
+            return;
+        }
+
+        /* タップターゲットからUniRxイベントハンドリングを取得 */
+        this.mpUniRxEventTrigger = this.mpObjMoleTapTarget.GetComponent<ObservableEventTrigger>( );
+
+        /* タップターゲットが空の場合 */
+        if ( this.mpUniRxEventTrigger == null )
+        {
+            Debug.Log( "[Error] <WamCharacterMole> Tap target is not added ObservableEventTrigger component." );
+            return;
+        }
+
+        /* タップターゲットがタップされた時のイベントを登録 */
+        this.mpUniRxEventTrigger.OnPointerDownAsObservable( ).Subscribe( _ => this.TappedMoleEvent( ) );
 
         /* アニメーターステート名（放置）が空の場合 */
         if ( string.IsNullOrEmpty( this.mStateNameIdle ) )
@@ -120,5 +156,31 @@ public class WamCharacterMole : MonoBehaviour
             /* 自分自身を削除する */
             Destroy( this.gameObject );
         }
+    }
+
+    /* タップターゲットがタップされた時のイベント */
+    public void TappedMoleEvent( )
+    {
+        /* 既にもぐらがタップされて倒されている場合、処理しない */
+        if ( this.mbDefeat )
+        {
+            return;
+        }
+
+        /* もぐらが倒されたとする */
+        this.mbDefeat = true;
+
+        /* 消失ステートに切り替える */
+        this.mpAnimator.SetInteger( this.mParameterNameStateChange , 2 );
+
+        /* ゲームモードクラスのインスタンスが空なら */
+        if ( WamMoleSlapGamemode.GetInstance( ) == null )
+        {
+            Debug.Log( "[Error] <WamCharacterMole> WamMoleSlapGamemode instance is null." );
+            return;
+        }
+
+        /* スコアを加算する */
+        WamMoleSlapGamemode.GetInstance( ).AddScore( this.mDefeatedScore );
     }
 }

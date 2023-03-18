@@ -8,14 +8,15 @@ using UnityEngine.Events;
 
 public class WamMoleSlapGamemode : MonoBehaviour
 {
-
     /* デリゲート宣言（タイマーカウントダウン） */
     public delegate void OnTimerCountdownDelegate( ushort Time );
     /* デリゲート定義（タイマーカウントダウン） */
     public OnTimerCountdownDelegate OnTimerCountdown;
 
-    /* インスタンスを取得する */
-    public static WamMoleSlapGamemode GetInstance( ) { return mpInstance; }
+    /* デリゲート宣言（スコア変動） */
+    public delegate void OnScoreUpdateDelegate( uint Score );
+    /* デリゲート定義（スコア変動） */
+    public OnScoreUpdateDelegate OnScoreUpdate;
 
     /* 最大制限時間 */
     [field: SerializeField, Label( "最大制限時間" ), Tooltip( "ゲーム開始時の最大制限時間" ), Range( 0 , 65535 )]
@@ -24,10 +25,6 @@ public class WamMoleSlapGamemode : MonoBehaviour
     /* テキストメッシュプロ（叩いた回数） */
     [field: SerializeField, Label( "テキストUI（叩いた回数）" ), Tooltip( "もぐらを叩いた回数を表示するテキストUI" )]
     private TextMeshProUGUI mpTmpCurrentHitCount;
-
-    /* テキストメッシュプロ（スコア） */
-    [field: SerializeField, Label( "テキストUI（スコア）" ), Tooltip( "プレイ中の合計スコアを表示するテキストUI" )]
-    private TextMeshProUGUI mpTmpCurrentScore;
 
     /* 背景セット */
     [field: SerializeField, Label( "背景セット" ), Tooltip( "ゲームプレイ中の背景絵" )]
@@ -90,6 +87,15 @@ public class WamMoleSlapGamemode : MonoBehaviour
     /* もぐら間の現在の生成距離 */
     private float mMoleSpawnDistance;
 
+    /* 現在のスコア */
+    private uint mCurrentScore;
+
+    /* インスタンスを取得する */
+    public static WamMoleSlapGamemode GetInstance( )
+    {
+        return mpInstance;
+    }
+
     public void Awake( )
     {
         /* インスタンスを保存 */
@@ -105,9 +111,6 @@ public class WamMoleSlapGamemode : MonoBehaviour
         /* 叩いた回数テキストを初期化する */
         this.mpTmpCurrentHitCount.SetText( "0" );
 
-        /* スコアテキストを初期化する */
-        this.mpTmpCurrentScore.SetText( "0" );
-
         /* 現在時間を最大制限時間に設定 */
         this.mCurrentTime = this.mMaxTime;
 
@@ -119,6 +122,9 @@ public class WamMoleSlapGamemode : MonoBehaviour
 
         /* もぐら間の現在の生成距離 */
         this.mMoleSpawnDistance = 0.0f;
+
+        /* 現在のスコアを初期化 */
+        this.mCurrentScore = 0;
 
         /* 生成したもぐらプレハブを初期化 */
         this.mpCurrentMole = null;
@@ -164,8 +170,11 @@ public class WamMoleSlapGamemode : MonoBehaviour
         /* 初期化していない場合 */
         if ( !this.mbInitialized )
         {
-            /* 現在時間テキストに最大制限時間を設定する */
+            /* 現在時間が最大制限時間になったことを通知 */
             this.OnTimerCountdown( this.mMaxTime );
+
+            /* 現在スコアが初期化されたことを通知 */
+            this.OnScoreUpdate( 0 );
 
             /* 初期化済みとする */
             this.mbInitialized = true;
@@ -183,7 +192,7 @@ public class WamMoleSlapGamemode : MonoBehaviour
             /* 現在時間を1秒分減算 */
             this.mCurrentTime--;
 
-            /* テキストに現在時間を設定する */
+            /* 現在時間が更新されたことを通知する */
             this.OnTimerCountdown( this.mCurrentTime );
         }
 
@@ -255,5 +264,15 @@ public class WamMoleSlapGamemode : MonoBehaviour
 
         /* もぐら生成までのランダム延長インターバル時間を取得する */
         this.mRandomExtSpawnIntervalTime = Random.Range( 0.0f , this.mMoleSpawnIntavalMaxExt );
+    }
+
+    /* スコアを加算する */
+    public void AddScore( ushort Score )
+    {
+        /* 現在のスコアに倒されたもぐらのスコアを加算 */
+        this.mCurrentScore += Score;
+
+        /* スコアが変動したことを通知 */
+        this.OnScoreUpdate( this.mCurrentScore );
     }
 }
