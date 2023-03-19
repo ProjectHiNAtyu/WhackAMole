@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using TMPro;
+using UniRx;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class WamMoleSlapGamemode : MonoBehaviour
 {
@@ -63,11 +65,15 @@ public class WamMoleSlapGamemode : MonoBehaviour
     [field: SerializeField, Label( "リザルトUI" ), Tooltip( "制限時間終了後に表示されるリザルトUI" )]
     private GameObject mpObjResultUI;
 
+    /* リトライボタンUI */
+    [field: SerializeField, Label( "リトライボタンUI" ), Tooltip( "リザルトUI内にあるリトライボタンUI")]
+    private Button mpButtonRetryUI;
+
     /* インスタンス */
     private static WamMoleSlapGamemode mpInstance;
 
-    /* 初期化したかどうか */
-    private bool mbInitialized;
+    /* 初回のみの処理を実行したかどうか */
+    private bool mbExecFirstProcess;
 
     /* 現在時間 */
     private ushort mCurrentTime;
@@ -114,38 +120,48 @@ public class WamMoleSlapGamemode : MonoBehaviour
     public void Awake( )
     {
         /* インスタンスを保存 */
-        if ( mpInstance == null )
+        if ( WamMoleSlapGamemode.mpInstance == null )
         {
-            mpInstance = this;
+            WamMoleSlapGamemode.mpInstance = this;
         }
+
+        /* リトライボタンUIが空なら */
+        if ( this.mpButtonRetryUI == null )
+        {
+            Debug.Log( "[Error] <WamMoleSlapGamemode> Retry button UI is null." );
+            return;
+        }
+
+        this.mpButtonRetryUI.onClick.AsObservable( ).Subscribe( _ => this.Initialize( ) );
     }
 
     // Start is called before the first frame update
     public void Start( )
     {
+        /* ゲームモードの初期化をする */
+        this.Initialize( );
+    }
+
+    /* ゲームモードの初期化をする */
+    private void Initialize( )
+    {
+        /* 各種変数初期化 */
+        this.mFlameTime                 = 0.0f;     /* フレーム時間 */
+        this.mCurrentSpawnIntervalTime  = 0.0f;     /* もぐら生成までの現在のインターバル時間 */
+        this.mMoleSpawnDistance         = 0.0f;     /* もぐら間の現在の生成距離 */
+
+        this.mCurrentScore              = 0;        /* 現在のスコア */
+        this.mCurrentSlapCount          = 0;        /* 現在のもぐらを叩いた回数 */
+
+        this.mbResult                   = false;    /* リザルト中かどうか */
+        this.mbExecFirstProcess         = false;    /* 初回のみの処理を実行したかどうか */
+
+        this.mpCurrentMole              = null;     /* 生成したもぐらプレハブ */
+
+
         /* 現在時間を最大制限時間に設定 */
         this.mCurrentTime = this.mMaxTime;
 
-        /* フレーム時間を初期化 */
-        this.mFlameTime = 0.0f;
-
-        /* もぐら生成までの現在のインターバル時間を初期化 */
-        this.mCurrentSpawnIntervalTime = 0.0f;
-
-        /* もぐら間の現在の生成距離 */
-        this.mMoleSpawnDistance = 0.0f;
-
-        /* 現在のスコアを初期化 */
-        this.mCurrentScore = 0;
-
-        /* 現在のもぐらを叩いた回数を初期化 */
-        this.mCurrentSlapCount = 0;
-
-        /* リザルト中かどうかを初期化 */
-        this.mbResult = false;
-
-        /* 生成したもぐらプレハブを初期化 */
-        this.mpCurrentMole = null;
 
         /* 背景セット個数分ループ */
         for ( byte i = 0; i < this.mpObjBackgroundArtSets.Length; i++ )
@@ -170,6 +186,7 @@ public class WamMoleSlapGamemode : MonoBehaviour
             /* 背景セットを表示する */
             this.mpObjBackgroundArtSets[this.mRandomNumber].SetActive( true );
         }
+
 
         /* もぐら生成までのランダム延長インターバル時間を取得する */
         this.mRandomExtSpawnIntervalTime = Random.Range( 0.0f , this.mMoleSpawnIntavalMaxExt );
@@ -245,8 +262,8 @@ public class WamMoleSlapGamemode : MonoBehaviour
             return;
         }
 
-        /* 初期化していない場合 */
-        if ( !this.mbInitialized )
+        /* 初回のみの処理を実行していない場合 */
+        if ( !this.mbExecFirstProcess )
         {
             /* 現在時間が最大制限時間になったことを通知 */
             this.OnTimerCountdown( this.mMaxTime );
@@ -257,8 +274,8 @@ public class WamMoleSlapGamemode : MonoBehaviour
             /* 現在もぐらを叩いた回数が初期化されたことを通知 */
             this.OnMoleSlapCountUpdate( 0 );
 
-            /* 初期化済みとする */
-            this.mbInitialized = true;
+            /* 初回のみの処理を実行したとする */
+            this.mbExecFirstProcess = true;
         }
 
         /* フレーム時間を加算 */

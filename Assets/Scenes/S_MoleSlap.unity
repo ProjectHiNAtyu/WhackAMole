@@ -2385,6 +2385,7 @@ MonoBehaviour:
   mMoleSpawnDistanceMin: 200
   mpObjInfoUI: {fileID: 130184628}
   mpObjResultUI: {fileID: 316524044}
+  mpButtonRetryUI: {fileID: 1843416211}
 --- !u!1 &1021696412
 GameObject:
   m_ObjectHideFlags: 0
