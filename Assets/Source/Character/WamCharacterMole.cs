@@ -174,13 +174,13 @@ public class WamCharacterMole : MonoBehaviour
         this.mpAnimator.SetInteger( this.mParameterNameStateChange , 2 );
 
         /* ゲームモードクラスのインスタンスが空なら */
-        if ( WamMoleSlapGamemode.GetInstance( ) == null )
+        if ( WamGameInstanceManager.GetInstance( ).GetGameModeManagerInstance( ) == null )
         {
-            Debug.Log( "[Error] <WamCharacterMole> WamMoleSlapGamemode instance is null." );
+            WamGameInstanceManager.GetInstance( ).GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Error , "WamCharacterMole" , "GameModeManger instance is null" );
             return;
         }
 
         /* スコアを加算する */
-        WamMoleSlapGamemode.GetInstance( ).AddScore( this.mDefeatedScore );
+        WamGameInstanceManager.GetInstance( ).GetGameModeManagerInstance( ).AddScore( this.mDefeatedScore );
     }
 }

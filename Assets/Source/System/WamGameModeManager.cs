@@ -8,13 +8,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class WamMoleSlapGamemode : MonoBehaviour
+public class WamGameModeManager : MonoBehaviour
 {
-    /* デリゲート宣言（タイマーカウントダウン） */
-    public delegate void OnTimerCountdownDelegate( ushort Time );
-    /* デリゲート定義（タイマーカウントダウン） */
-    public OnTimerCountdownDelegate OnTimerCountdown;
-
     /* デリゲート宣言（スコア変動） */
     public delegate void OnScoreUpdateDelegate( uint Score );
     /* デリゲート定義（スコア変動） */
@@ -24,10 +19,6 @@ public class WamMoleSlapGamemode : MonoBehaviour
     public delegate void OnMoleSlapCountUpdateDelegate( uint Count );
     /* デリゲート定義（もぐらを叩いた回数変動） */
     public OnMoleSlapCountUpdateDelegate OnMoleSlapCountUpdate;
-
-    /* 最大制限時間 */
-    [field: SerializeField, Label( "最大制限時間" ), Tooltip( "ゲーム開始時の最大制限時間" ), Range( 0 , 65535 )]
-    private ushort mMaxTime;
 
     /* 背景セット */
     [field: SerializeField, Label( "背景セット" ), Tooltip( "ゲームプレイ中の背景絵" )]
@@ -45,18 +36,6 @@ public class WamMoleSlapGamemode : MonoBehaviour
     [field: SerializeField, Label( "リトライボタンUI" ), Tooltip( "リザルトUI内にあるリトライボタンUI")]
     private Button mpButtonRetryUI;
 
-    /* インスタンス */
-    private static WamMoleSlapGamemode mpInstance;
-
-    /* 初回のみの処理を実行したかどうか */
-    private bool mbExecFirstProcess;
-
-    /* 現在時間 */
-    private ushort mCurrentTime;
-
-    /* フレーム時間 */
-    private float mFlameTime;
-
     /* ランダム選択用数値 */
     private byte mRandomNumber;
 
@@ -69,20 +48,8 @@ public class WamMoleSlapGamemode : MonoBehaviour
     /* リザルト中かどうか */
     private bool mbResult;
 
-    /* インスタンスを取得する */
-    public static WamMoleSlapGamemode GetInstance( )
-    {
-        return mpInstance;
-    }
-
     public void Awake( )
     {
-        /* インスタンスを保存 */
-        if ( WamMoleSlapGamemode.mpInstance == null )
-        {
-            WamMoleSlapGamemode.mpInstance = this;
-        }
-
         /* リトライボタンUIが空なら */
         if ( this.mpButtonRetryUI == null )
         {
@@ -96,28 +63,16 @@ public class WamMoleSlapGamemode : MonoBehaviour
     // Start is called before the first frame update
     public void Start( )
     {
-        /* ゲームモードの初期化をする */
-        this.Initialize( );
     }
 
     /* ゲームモードの初期化をする */
-    private void Initialize( )
+    public void Initialize( )
     {
-        /* もぐら生成管理を初期化する */
-        WamGameInstanceManager.GetInstance( ).GetMoleSpawnManagerInstance( ).Initialize( );
-
         /* 各種変数初期化 */
-        this.mFlameTime                 = 0.0f;     /* フレーム時間 */
-
         this.mCurrentScore              = 0;        /* 現在のスコア */
         this.mCurrentSlapCount          = 0;        /* 現在のもぐらを叩いた回数 */
 
         this.mbResult                   = false;    /* リザルト中かどうか */
-        this.mbExecFirstProcess         = false;    /* 初回のみの処理を実行したかどうか */
-
-
-        /* 現在時間を最大制限時間に設定 */
-        this.mCurrentTime = this.mMaxTime;
 
 
         /* 背景セット個数分ループ */
@@ -175,11 +130,23 @@ public class WamMoleSlapGamemode : MonoBehaviour
         this.mpObjResultUI.GetComponent<CanvasGroup>( ).alpha = 0.0f;
     }
 
+    //------------------------------------------------------------------------------//
+    //! @brief	初回のみの処理を実行する
+    //------------------------------------------------------------------------------//
+    public void ExecFirstProcess( )
+    {
+        /* 現在スコアが初期化されたことを通知 */
+        this.OnScoreUpdate( 0 );
+
+        /* 現在もぐらを叩いた回数が初期化されたことを通知 */
+        this.OnMoleSlapCountUpdate( 0 );
+    }
+
     // Update is called once per frame
     public void Update( )
     {
         /* もし現在時間が0秒以下なら */
-        if ( this.mCurrentTime <= 0 )
+        if ( WamGameInstanceManager.GetInstance( ).GetTimeManagerInstance( ).IsTimeOver )
         {
             /* 直前までリザルト中でなかった場合 */
             if ( !this.mbResult )
@@ -210,38 +177,6 @@ public class WamMoleSlapGamemode : MonoBehaviour
                 this.mpObjResultUI.GetComponent<CanvasGroup>( ).alpha = 1.0f;
             }
             return;
-        }
-
-        /* 初回のみの処理を実行していない場合 */
-        if ( !this.mbExecFirstProcess )
-        {
-            /* 現在時間が最大制限時間になったことを通知 */
-            this.OnTimerCountdown( this.mMaxTime );
-
-            /* 現在スコアが初期化されたことを通知 */
-            this.OnScoreUpdate( 0 );
-
-            /* 現在もぐらを叩いた回数が初期化されたことを通知 */
-            this.OnMoleSlapCountUpdate( 0 );
-
-            /* 初回のみの処理を実行したとする */
-            this.mbExecFirstProcess = true;
-        }
-
-        /* フレーム時間を加算 */
-        this.mFlameTime += Time.deltaTime;
-
-        /* 合計フレーム時間が1秒を超えたら */
-        if ( 1.0f <= this.mFlameTime )
-        {
-            /* 合計フレーム時間から1秒減算 */
-            this.mFlameTime -= 1.0f;
-
-            /* 現在時間を1秒分減算 */
-            this.mCurrentTime--;
-
-            /* 現在時間が更新されたことを通知する */
-            this.OnTimerCountdown( this.mCurrentTime );
         }
 
         /* ランダムでもぐらを生成する */

@@ -214,7 +214,6 @@ public class WamMoleSpawnManager : MonoBehaviour
             /* デバッグメッセージを表示する場合のみ表示する */
             if ( bMessage )
             {
-
                 WamGameInstanceManager.GetInstance( ).GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Error , "WamMoleSpawnManager" , "PlayArea is null" );
             }
 

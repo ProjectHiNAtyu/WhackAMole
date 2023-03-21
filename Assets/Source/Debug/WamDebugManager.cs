@@ -13,6 +13,9 @@
 #define DEBUG
 
 
+#if DEBUG
+
+
 //======================================//
 //				Include					//
 //======================================//
@@ -106,30 +109,32 @@ public class WamDebugManager : MonoBehaviour
     public void ShowDebugLogTemplate( EWamLogType eType , string ClassName , string Message )
     {
         /* 表示するメッセージ内容を初期化 */
-        mLogMessage = string.Empty;
+        this.mLogMessage = string.Empty;
 
         /* ログ種類の構築 */
-        mLogMessage += "[";
+        this.mLogMessage += "[";
         switch ( eType )
         {
-            case EWamLogType.Notice:    mLogMessage += "Notice";    break;
-            case EWamLogType.Warning:   mLogMessage += "Warning";   break;
-            case EWamLogType.Error:     mLogMessage += "Error";     break;
-            case EWamLogType.Failed:    mLogMessage += "Failed";    break;
-            case EWamLogType.Success:   mLogMessage += "Success";   break;
+            case EWamLogType.Notice:    this.mLogMessage += "Notice";    break;
+            case EWamLogType.Warning:   this.mLogMessage += "Warning";   break;
+            case EWamLogType.Error:     this.mLogMessage += "Error";     break;
+            case EWamLogType.Failed:    this.mLogMessage += "Failed";    break;
+            case EWamLogType.Success:   this.mLogMessage += "Success";   break;
         }
-        mLogMessage += "] ";
+        this.mLogMessage += "] ";
 
         /* 呼び出し元クラス名の構築 */
-        mLogMessage += "<";
-        mLogMessage += ClassName;
-        mLogMessage += "> ";
+        this.mLogMessage += "<";
+        this.mLogMessage += ClassName;
+        this.mLogMessage += "> ";
 
         /* 本文の構築 */
-        mLogMessage += Message;
-        mLogMessage += ".";
+        this.mLogMessage += Message;
+        this.mLogMessage += ".";
 
         /* デバッグログを表示 */
-        UnityEngine.Debug.Log( mLogMessage );
+        UnityEngine.Debug.Log( this.mLogMessage );
     }
 }
+
+#endif

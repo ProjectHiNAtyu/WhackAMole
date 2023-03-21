@@ -9,14 +9,14 @@ public class WamUiHit : MonoBehaviour
     public void Start()
     {
         /* ゲームモードクラスのインスタンスが空なら */
-        if ( WamMoleSlapGamemode.GetInstance( ) == null )
+        if ( WamGameInstanceManager.GetInstance( ).GetGameModeManagerInstance( ) == null )
         {
-            Debug.Log( "[Error] <WamUiHit> WamMoleSlapGamemode instance is null." );
+            WamGameInstanceManager.GetInstance( ).GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Error , "WamUiHit" , "GameModeManger instance is null" );
             return;
         }
 
         /* もぐらを叩いた回数変動のデリゲートを登録 */
-        WamMoleSlapGamemode.GetInstance( ).OnMoleSlapCountUpdate += OnMoleSlapCountUpdate;
+        WamGameInstanceManager.GetInstance( ).GetGameModeManagerInstance( ).OnMoleSlapCountUpdate += OnMoleSlapCountUpdate;
     }
 
     // Update is called once per frame
@@ -31,7 +31,7 @@ public class WamUiHit : MonoBehaviour
         /* このスクリプトがアタッチされているゲームオブジェクトに、テキストメッシュプロUGUIが追加されていない場合 */
         if ( this.GetComponent<TextMeshProUGUI>( ) == null )
         {
-            Debug.Log( "[Error] <WamUiHit> " + this.name + " is not add TextMeshProUGUI component." );
+            WamGameInstanceManager.GetInstance( ).GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Error , "WamUiHit" , this.name + " is not add TextMeshProUGUI component" );
             return;
         }
 

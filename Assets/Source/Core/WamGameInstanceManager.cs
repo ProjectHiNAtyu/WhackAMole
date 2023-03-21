@@ -27,7 +27,7 @@ public class WamGameInstanceManager : MonoBehaviour
 
     /* ゲームモード管理 */
     [field: SerializeField, Label( "ゲームモード管理" ), Tooltip( "ゲームモード管理スクリプトが追加されているゲームオブジェクトを指定" )]
-    private WamMoleSlapGamemode mpGameModeManager;
+    private WamGameModeManager mpGameModeManager;
 
     /* UI管理 */
     [field: SerializeField, Label( "UI管理" ), Tooltip( "UI管理スクリプトが追加されているゲームオブジェクトを指定" )]
@@ -53,6 +53,9 @@ public class WamGameInstanceManager : MonoBehaviour
     /* インスタンス */
     private static WamGameInstanceManager mpInstance;
 
+    /* 初回のみの処理を実行したかどうか */
+    private bool mbExecFirstProcess;
+
 
     //======================================//
     //		    パブリック関数             	//
@@ -73,11 +76,11 @@ public class WamGameInstanceManager : MonoBehaviour
     //------------------------------------------------------------------------------//
     //! @brief	ゲームモード管理インスタンスを取得する
     //------------------------------------------------------------------------------//
-    public WamMoleSlapGamemode GetGameModeManagerInstance( )
+    public WamGameModeManager GetGameModeManagerInstance( )
     {
         if ( this.mpGameModeManager == null )
         {
-            Debug.Log( "[Error] <WamGameInstanceManager> GameModeManager is null." );
+            this.GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Error , "WamGameInstanceManager" , "GameModeManager is null" );
         }
         return this.mpGameModeManager;
     }
@@ -89,7 +92,7 @@ public class WamGameInstanceManager : MonoBehaviour
     {
         if ( this.mpUIManager == null )
         {
-            Debug.Log( "[Error] <WamGameInstanceManager> UIManager is null." );
+            this.GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Error , "WamGameInstanceManager" , "UIManager is null" );
         }
         return this.mpUIManager;
     }
@@ -101,7 +104,7 @@ public class WamGameInstanceManager : MonoBehaviour
     {
         if ( this.mpTimeManager == null )
         {
-            Debug.Log( "[Error] <WamGameInstanceManager> TimeManager is null." );
+            this.GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Error , "WamGameInstanceManager" , "TimeManager is null" );
         }
         return this.mpTimeManager;
     }
@@ -113,7 +116,7 @@ public class WamGameInstanceManager : MonoBehaviour
     {
         if ( this.mpMoleSpawnManager == null )
         {
-            Debug.Log( "[Error] <WamGameInstanceManager> MoleSpawnManager is null." );
+            this.GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Error , "WamGameInstanceManager" , "MoleSpawnManager is null" );
         }
         return this.mpMoleSpawnManager;
     }
@@ -147,7 +150,8 @@ public class WamGameInstanceManager : MonoBehaviour
     //------------------------------------------------------------------------------//
     public void Start( )
     {
-
+        /* 初期化処理 */
+        this.Initialize( );
     }
 
     //------------------------------------------------------------------------------//
@@ -155,6 +159,32 @@ public class WamGameInstanceManager : MonoBehaviour
     //------------------------------------------------------------------------------//
     public void Update( )
     {
+        /* 初回のみの処理を実行していない場合 */
+        if ( !this.mbExecFirstProcess )
+        {
+            this.GetTimeManagerInstance( ).ExecFirstProcess( );
+            this.GetGameModeManagerInstance( ).ExecFirstProcess( );
 
+            /* 初回のみの処理を実行したとする */
+            this.mbExecFirstProcess = true;
+        }
+    }
+
+
+    //======================================//
+    //		    プライベート関数            //
+    //======================================//
+
+    //------------------------------------------------------------------------------//
+    //! @brief	初期化処理
+    //------------------------------------------------------------------------------//
+    private void Initialize( )
+    {
+        /* 各種変数初期化 */
+        this.mbExecFirstProcess = false;    /* 初回のみの処理を実行したかどうか */
+
+        this.GetGameModeManagerInstance( ).Initialize( );
+        this.GetMoleSpawnManagerInstance( ).Initialize( );
+        this.GetTimeManagerInstance( ).Initialize( );
     }
 }
