@@ -3154,8 +3154,10 @@ MonoBehaviour:
   mpObjPlayArea: {fileID: 1046992387}
   mpObjMoles:
   - {fileID: 8040847654716298751, guid: 7e67de4154448474cb0b2e5ecb25b1b7, type: 3}
-  mSpawnIntavalMin: 0.5
-  mSpawnIntavalMaxExt: 3
+  - {fileID: 8040847654716298751, guid: 2a718866f48b5d942b82d62ca6341070, type: 3}
+  - {fileID: 8040847654716298751, guid: 7d5605bc9d22a4343ac030dd17bea78d, type: 3}
+  mSpawnIntavalMin: 0.3
+  mSpawnIntavalMaxExt: 2.5
   mSpawnDistanceMin: 200
 --- !u!1 &1205184571
 GameObject:

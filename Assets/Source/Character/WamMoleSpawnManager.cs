@@ -282,7 +282,7 @@ public class WamMoleSpawnManager : MonoBehaviour
     private bool GetRandomMole( )
     {
         /* 生成するもぐらプレハブをランダムで選定 */
-        this.mRandomSelect = (byte)Random.Range( 0 , ( this.mpObjMoles.Length - 1 ) );
+        this.mRandomSelect = (byte)Random.Range( 0 , this.mpObjMoles.Length );
 
         /* もぐらプレハブが空なら */
         if ( this.mpObjMoles[this.mRandomSelect] == null )
