@@ -24,18 +24,6 @@ public class WamGameModeManager : MonoBehaviour
     [field: SerializeField, Label( "背景セット" ), Tooltip( "ゲームプレイ中の背景絵" )]
     private GameObject[] mpObjBackgroundArtSets;
 
-    /* 情報ヘッダーUI */
-    [field: SerializeField, Label( "情報ヘッダーUI" ), Tooltip( "ゲームプレイ中の情報が表示されるUI" )]
-    private GameObject mpObjInfoUI;
-
-    /* リザルトUI */
-    [field: SerializeField, Label( "リザルトUI" ), Tooltip( "制限時間終了後に表示されるリザルトUI" )]
-    private GameObject mpObjResultUI;
-
-    /* リトライボタンUI */
-    [field: SerializeField, Label( "リトライボタンUI" ), Tooltip( "リザルトUI内にあるリトライボタンUI")]
-    private Button mpButtonRetryUI;
-
     /* ランダム選択用数値 */
     private byte mRandomNumber;
 
@@ -45,19 +33,9 @@ public class WamGameModeManager : MonoBehaviour
     /* 現在のもぐらを叩いた回数 */
     private uint mCurrentSlapCount;
 
-    /* リザルト中かどうか */
-    private bool mbResult;
-
     public void Awake( )
     {
-        /* リトライボタンUIが空なら */
-        if ( this.mpButtonRetryUI == null )
-        {
-            Debug.Log( "[Error] <WamMoleSlapGamemode> Retry button UI is null." );
-            return;
-        }
 
-        this.mpButtonRetryUI.onClick.AsObservable( ).Subscribe( _ => this.Initialize( ) );
     }
 
     // Start is called before the first frame update
@@ -71,8 +49,6 @@ public class WamGameModeManager : MonoBehaviour
         /* 各種変数初期化 */
         this.mCurrentScore              = 0;        /* 現在のスコア */
         this.mCurrentSlapCount          = 0;        /* 現在のもぐらを叩いた回数 */
-
-        this.mbResult                   = false;    /* リザルト中かどうか */
 
 
         /* 背景セット個数分ループ */
@@ -95,39 +71,6 @@ public class WamGameModeManager : MonoBehaviour
             /* 背景セットを表示する */
             this.mpObjBackgroundArtSets[this.mRandomNumber].SetActive( true );
         }
-
-
-        /* 情報ヘッダーUIが空なら */
-        if ( this.mpObjInfoUI == null )
-        {
-            Debug.Log( "[Error] <WamMoleSlapGamemode> Info UI is null." );
-            return;
-        }
-
-        /* 情報ヘッダーUIを表示 */
-        this.mpObjInfoUI.SetActive( true );
-
-        /* リザルトUIが空なら */
-        if ( this.mpObjResultUI == null )
-        {
-            Debug.Log( "[Error] <WamMoleSlapGamemode> Result UI is null." );
-            return;
-        }
-
-        if ( this.mpObjResultUI.GetComponent<CanvasGroup>( ) == null )
-        {
-            Debug.Log( "[Error] <WamMoleSlapGamemode> Result UI is not add CanvasGroup component." );
-            return;
-        }
-
-        /* リザルトUIを表示 */
-        this.mpObjResultUI.SetActive( true );
-
-        /* リザルトUIの当たり判定を無くす */
-        this.mpObjResultUI.GetComponent<CanvasGroup>( ).blocksRaycasts = false;
-
-        /* リザルトUIを透明度0にする */
-        this.mpObjResultUI.GetComponent<CanvasGroup>( ).alpha = 0.0f;
     }
 
     //------------------------------------------------------------------------------//
@@ -148,34 +91,6 @@ public class WamGameModeManager : MonoBehaviour
         /* もし現在時間が0秒以下なら */
         if ( WamGameInstanceManager.GetInstance( ).GetTimeManagerInstance( ).IsTimeOver )
         {
-            /* 直前までリザルト中でなかった場合 */
-            if ( !this.mbResult )
-            {
-                /* リザルト中とする */
-                this.mbResult = true;
-
-                /* 情報ヘッダーUIが空なら */
-                if ( this.mpObjInfoUI == null )
-                {
-                    Debug.Log( "[Error] <WamMoleSlapGamemode> Info UI is null." );
-                    return;
-                }
-
-                /* リザルトUIが空なら */
-                if ( this.mpObjResultUI == null )
-                {
-                    return;
-                }
-
-                /* 情報ヘッダーUIを非表示 */
-                this.mpObjInfoUI.SetActive( false );
-
-                /* リザルトUIの当たり判定を復活させる */
-                this.mpObjResultUI.GetComponent<CanvasGroup>( ).blocksRaycasts = true;
-
-                /* リザルトUIを透明度1にする */
-                this.mpObjResultUI.GetComponent<CanvasGroup>( ).alpha = 1.0f;
-            }
             return;
         }
 

@@ -12,6 +12,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -104,7 +105,8 @@ public class WamGameInstanceManager : MonoBehaviour
     {
         if ( this.mpTimeManager == null )
         {
-            this.GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Error , "WamGameInstanceManager" , "TimeManager is null" );
+            this.mpTimeManager = this.AddComponent<WamTimeManager>( );
+            this.GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Notice , "WamGameInstanceManager" , "TimeManager is nulled, force created instance" );
         }
         return this.mpTimeManager;
     }
@@ -128,9 +130,24 @@ public class WamGameInstanceManager : MonoBehaviour
     {
         if ( this.mpDebugManager == null )
         {
-            Debug.Log( "[Error] <WamGameInstanceManager> DebugManager is null." );
+            this.mpDebugManager = this.AddComponent<WamDebugManager>( );
+            this.mpDebugManager.ShowDebugLogTemplate( WamDebugManager.EWamLogType.Notice , "WamGameInstanceManager" , "DebugManager is nulled, force created instance" );
         }
         return this.mpDebugManager;
+    }
+
+    //------------------------------------------------------------------------------//
+    //! @brief	初期化処理
+    //------------------------------------------------------------------------------//
+    public void Initialize( )
+    {
+        /* 各種変数初期化 */
+        this.mbExecFirstProcess = false;    /* 初回のみの処理を実行したかどうか */
+
+        this.GetGameModeManagerInstance( ).Initialize( );
+        this.GetMoleSpawnManagerInstance( ).Initialize( );
+        this.GetTimeManagerInstance( ).Initialize( );
+        this.GetUIManagerInstance( ).Initialize( );
     }
 
     //------------------------------------------------------------------------------//
@@ -168,23 +185,5 @@ public class WamGameInstanceManager : MonoBehaviour
             /* 初回のみの処理を実行したとする */
             this.mbExecFirstProcess = true;
         }
-    }
-
-
-    //======================================//
-    //		    プライベート関数            //
-    //======================================//
-
-    //------------------------------------------------------------------------------//
-    //! @brief	初期化処理
-    //------------------------------------------------------------------------------//
-    private void Initialize( )
-    {
-        /* 各種変数初期化 */
-        this.mbExecFirstProcess = false;    /* 初回のみの処理を実行したかどうか */
-
-        this.GetGameModeManagerInstance( ).Initialize( );
-        this.GetMoleSpawnManagerInstance( ).Initialize( );
-        this.GetTimeManagerInstance( ).Initialize( );
     }
 }

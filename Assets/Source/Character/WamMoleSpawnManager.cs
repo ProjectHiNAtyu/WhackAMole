@@ -177,6 +177,8 @@ public class WamMoleSpawnManager : MonoBehaviour
         /* もぐら生成までのランダム延長インターバル時間を取得する */
         this.mRandomExtSpawnIntervalTime = Random.Range( 0.0f , this.mSpawnIntavalMaxExt );
 
+        //  WamGameInstanceManager.GetInstance( ).GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Success , "WamMoleSpawnManager" , "Mole spawned to (" + this.mSpawnLocation.x + " , " + this.mSpawnLocation.y + ")" );
+
         /* もぐらプレハブを生成出来た結果を返す */
         return true;
     }

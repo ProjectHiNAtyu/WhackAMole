@@ -30,7 +30,7 @@ Transform:
   m_Children:
   - {fileID: 5802072038651827387}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1607912588170393740
 GameObject:
@@ -120,6 +120,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d287bf41282e59c48896baae5216429e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mpObjInfoUI: {fileID: 0}
+  mpObjResultUI: {fileID: 0}
+  mpButtonRetryUI: {fileID: 0}
 --- !u!1 &3441715223358430857
 GameObject:
   m_ObjectHideFlags: 0
@@ -170,7 +173,7 @@ MonoBehaviour:
   - {fileID: 8040847654716298751, guid: 2a718866f48b5d942b82d62ca6341070, type: 3}
   - {fileID: 8040847654716298751, guid: 7d5605bc9d22a4343ac030dd17bea78d, type: 3}
   mSpawnIntavalMin: 0.15
-  mSpawnIntavalMaxExt: 2
+  mSpawnIntavalMaxExt: 2.5
   mSpawnDistanceMin: 150
 --- !u!1 &5156799464696892320
 GameObject:
@@ -221,9 +224,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  mpObjInfoUI: {fileID: 0}
-  mpObjResultUI: {fileID: 0}
-  mpButtonRetryUI: {fileID: 0}
 --- !u!1 &5660421011656789408
 GameObject:
   m_ObjectHideFlags: 0
