@@ -103,6 +103,9 @@ public class WamMoleSlapGamemode : MonoBehaviour
     /* ゲームモードの初期化をする */
     private void Initialize( )
     {
+        /* もぐら生成管理を初期化する */
+        WamGameInstanceManager.GetInstance( ).GetMoleSpawnManagerInstance( ).Initialize( );
+
         /* 各種変数初期化 */
         this.mFlameTime                 = 0.0f;     /* フレーム時間 */
 
@@ -241,6 +244,8 @@ public class WamMoleSlapGamemode : MonoBehaviour
             this.OnTimerCountdown( this.mCurrentTime );
         }
 
+        /* ランダムでもぐらを生成する */
+        WamGameInstanceManager.GetInstance( ).GetMoleSpawnManagerInstance( ).SpawnRandomMole( );
     }
 
     /* スコアを加算する */

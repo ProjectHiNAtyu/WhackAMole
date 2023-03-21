@@ -35,15 +35,15 @@ public class WamMoleSpawnManager : MonoBehaviour
     private GameObject[] mpObjMoles;
 
     /* もぐらの生成インターバル（最小） */
-    [field: SerializeField, Label( "もぐらの生成インターバル（最小）" ), Tooltip( "もぐらが生成されるまでに待機が必要な最小インターバル時間" ), Range( 0.0f , 100.0f )]
+    [field: SerializeField, Label( "生成インターバル（最小）" ), Tooltip( "もぐらが生成されるまでに待機が必要な最小インターバル時間" ), Range( 0.0f , 100.0f )]
     private float mSpawnIntavalMin;
 
     /* もぐらの生成インターバル（最大延長） */
-    [field: SerializeField, Label( "もぐらの生成インターバル（最大延長）" ), Tooltip( "もぐらが生成されるまでに待機が必要な最大延長インターバル時間で、最小時間に加算される" ), Range( 0.0f , 100.0f )]
+    [field: SerializeField, Label( "生成インターバル（最大延長）" ), Tooltip( "もぐらが生成されるまでに待機が必要な最大延長インターバル時間で、最小時間に加算される" ), Range( 0.0f , 100.0f )]
     private float mSpawnIntavalMaxExt;
 
-    /* もぐら間の最小生成距離 */
-    [field: SerializeField, Label( "もぐら間の最小生成距離" ), Tooltip( "前回生成されたもぐらから空ける最小距離" ), Range( 0.0f , 10000.0f )]
+    /* もぐら間の最小生成距離間隔 */
+    [field: SerializeField, Label( "最小生成距離間隔" ), Tooltip( "前回生成されたもぐらから空ける最小距離間隔" ), Range( 0.0f , 10000.0f )]
     private float mSpawnDistanceMin;
 
 
@@ -97,7 +97,7 @@ public class WamMoleSpawnManager : MonoBehaviour
         }
 
         /* 実行に必要な設定条件を確認する（メッセージ付き） */
-        CheckRequiredConditions( bMessage: true );
+        this.CheckRequiredConditions( bMessage: true );
     }
 
     //------------------------------------------------------------------------------//
@@ -133,9 +133,9 @@ public class WamMoleSpawnManager : MonoBehaviour
     public bool SpawnRandomMole( )
     {
         /* 実行に必要な条件が設定されていない場合、ログを表示して生成できなかった結果を返す */
-        if ( !CheckRequiredConditions( ) )
+        if ( !this.CheckRequiredConditions( ) )
         {
-            Debug.Log( "[Failed] <WamMoleSpawnManager> Mole spawn conditions is not match." );
+            WamGameInstanceManager.GetInstance( ).GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Failed , "WamMoleSpawnManager" , "Mole spawn conditions is not match" );
             return false;
         }
 
@@ -151,22 +151,22 @@ public class WamMoleSpawnManager : MonoBehaviour
         Random.InitState( System.DateTime.Now.Millisecond );
 
         /* もぐらを生成する座標をプレイエリア内からランダムで取得する */
-        GetRandomSpawnLocation( );
+        this.GetRandomSpawnLocation( );
 
         /* 直前に生成されたもぐらがいる場合、そのもぐらと現在ランダムで取得した座標との距離を調べ、指定距離以内の場合は再度ランダムで座標を取らせる */
-        if ( !CheckSpawnDistance( ) )
+        if ( !this.CheckSpawnDistance( ) )
         {
             return false;
         }
 
         /* もぐらプレハブ配列からランダムで生成するもぐらを選定、プレハブが存在しない場合は再度ランダム選定する */
-        if ( !GetRandomMole( ) )
+        if ( !this.GetRandomMole( ) )
         {
             return false;
         }
 
         /* もぐらプレハブを生成し、失敗している場合は再度生成ルーチンに戻る */
-        if ( !CreateMole( ) )
+        if ( !this.CreateMole( ) )
         {
             return false;
         }
@@ -201,7 +201,7 @@ public class WamMoleSpawnManager : MonoBehaviour
             /* デバッグメッセージを表示する場合のみ表示する */
             if ( bMessage )
             {
-                Debug.Log( "[Error] <WamMoleSpawnManager> Mole prefab is null." );
+                WamGameInstanceManager.GetInstance( ).GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Error , "WamMoleSpawnManager" , "Mole prefab is null" );
             }
 
             /* 実行に必要な条件が設定されていない結果を返す */
@@ -214,7 +214,8 @@ public class WamMoleSpawnManager : MonoBehaviour
             /* デバッグメッセージを表示する場合のみ表示する */
             if ( bMessage )
             {
-                Debug.Log( "[Error] <WamMoleSpawnManager> PlayArea is null." );
+
+                WamGameInstanceManager.GetInstance( ).GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Error , "WamMoleSpawnManager" , "PlayArea is null" );
             }
 
             /* 実行に必要な条件が設定されていない結果を返す */
@@ -227,7 +228,7 @@ public class WamMoleSpawnManager : MonoBehaviour
             /* デバッグメッセージを表示する場合のみ表示する */
             if ( bMessage )
             {
-                Debug.Log( "[Error] <WamMoleSpawnManager> PlayArea RectTransform component is null." );
+                WamGameInstanceManager.GetInstance( ).GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Error , "WamMoleSpawnManager" , "PlayArea RectTransform component is null" );
             }
 
             /* 実行に必要な条件が設定されていない結果を返す */
@@ -287,7 +288,7 @@ public class WamMoleSpawnManager : MonoBehaviour
         if ( this.mpObjMoles[this.mRandomSelect] == null )
         {
             /* デバッグメッセージを表示する */
-            Debug.Log( "[Error] <WamMoleSpawnManager> Moles prefab array num " + this.mRandomSelect + " is null." );
+            WamGameInstanceManager.GetInstance( ).GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Error , "WamMoleSpawnManager" , "Moles prefab array num " + this.mRandomSelect + " is null" );
 
             /* もう一度ランダムでもぐらを取らせ直す */
             return false;
@@ -308,7 +309,7 @@ public class WamMoleSpawnManager : MonoBehaviour
         /* もぐらプレハブの生成が成功していない場合、エラーログを出して失敗した結果を返す */
         if ( this.mpCurrentMole == null )
         {
-            Debug.Log( "[Failed] <WamMoleSpawnManager> Mole prefab create failed." );
+            WamGameInstanceManager.GetInstance( ).GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Failed , "WamMoleSpawnManager" , "Mole prefab create failed" );
             return false;
         }
 

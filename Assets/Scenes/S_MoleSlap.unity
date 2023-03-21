@@ -2227,6 +2227,50 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &974624145
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 974624146}
+  - component: {fileID: 974624147}
+  m_Layer: 0
+  m_Name: DebugManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &974624146
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 974624145}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1908959005}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &974624147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 974624145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c2c596d27606c6468962ab4eddd1c01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &988168604
 GameObject:
   m_ObjectHideFlags: 0
@@ -2496,12 +2540,6 @@ MonoBehaviour:
   - {fileID: 52646025}
   - {fileID: 424112323}
   - {fileID: 899835793}
-  mpObjPlayArea: {fileID: 1046992387}
-  mpObjMoleAttachParent: {fileID: 1046992387}
-  mpObjMole: {fileID: 8040847654716298751, guid: 7e67de4154448474cb0b2e5ecb25b1b7, type: 3}
-  mMoleSpawnIntavalMin: 0.3
-  mMoleSpawnIntavalMaxExt: 3
-  mMoleSpawnDistanceMin: 200
   mpObjInfoUI: {fileID: 130184628}
   mpObjResultUI: {fileID: 316524044}
   mpButtonRetryUI: {fileID: 1843416211}
@@ -3078,6 +3116,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1191719986}
+  - component: {fileID: 1191719987}
   m_Layer: 0
   m_Name: EnemySpawnManager
   m_TagString: Untagged
@@ -3100,6 +3139,24 @@ Transform:
   m_Father: {fileID: 1908959005}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1191719987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1191719985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89e138c7a80e6b3488fe131b983a6ce4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mpObjPlayArea: {fileID: 1046992387}
+  mpObjMoles:
+  - {fileID: 8040847654716298751, guid: 7e67de4154448474cb0b2e5ecb25b1b7, type: 3}
+  mSpawnIntavalMin: 0.5
+  mSpawnIntavalMaxExt: 3
+  mSpawnDistanceMin: 200
 --- !u!1 &1205184571
 GameObject:
   m_ObjectHideFlags: 0
@@ -5060,6 +5117,7 @@ Transform:
   - {fileID: 126208010}
   - {fileID: 781444571}
   - {fileID: 1191719986}
+  - {fileID: 974624146}
   m_Father: {fileID: 308059378}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5075,6 +5133,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c61f49c84cd46549b3474061cf1b0df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mpGameModeManager: {fileID: 1020890749}
+  mpUIManager: {fileID: 126208011}
+  mpTimeManager: {fileID: 781444572}
+  mpMoleSpawnManager: {fileID: 1191719987}
+  mpDebugManager: {fileID: 974624147}
 --- !u!1 &1969941998
 GameObject:
   m_ObjectHideFlags: 0
