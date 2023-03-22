@@ -81,7 +81,8 @@ public class WamGameInstanceManager : MonoBehaviour
     {
         if ( this.mpGameModeManager == null )
         {
-            this.GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Error , "WamGameInstanceManager" , "GameModeManager is null" );
+            this.mpGameModeManager = this.AddComponent<WamGameModeManager>( );
+            this.GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Notice , "WamGameInstanceManager" , "GameModeManager is nulled, force created instance" );
         }
         return this.mpGameModeManager;
     }

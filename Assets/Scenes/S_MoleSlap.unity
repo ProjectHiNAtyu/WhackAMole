@@ -1227,6 +1227,26 @@ PrefabInstance:
       propertyPath: mpButtonRetryUI
       value: 
       objectReference: {fileID: 1843416211}
+    - target: {fileID: 4188136559791244678, guid: 6c5c2b392916e6e47aac40bf39926480, type: 3}
+      propertyPath: mpObjBackgroundArtSets.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4188136559791244678, guid: 6c5c2b392916e6e47aac40bf39926480, type: 3}
+      propertyPath: mpObjBackgroundArtSets.Array.data[0]
+      value: 
+      objectReference: {fileID: 1627479419}
+    - target: {fileID: 4188136559791244678, guid: 6c5c2b392916e6e47aac40bf39926480, type: 3}
+      propertyPath: mpObjBackgroundArtSets.Array.data[1]
+      value: 
+      objectReference: {fileID: 52646025}
+    - target: {fileID: 4188136559791244678, guid: 6c5c2b392916e6e47aac40bf39926480, type: 3}
+      propertyPath: mpObjBackgroundArtSets.Array.data[2]
+      value: 
+      objectReference: {fileID: 424112323}
+    - target: {fileID: 4188136559791244678, guid: 6c5c2b392916e6e47aac40bf39926480, type: 3}
+      propertyPath: mpObjBackgroundArtSets.Array.data[3]
+      value: 
+      objectReference: {fileID: 899835793}
     - target: {fileID: 4323599966907483287, guid: 6c5c2b392916e6e47aac40bf39926480, type: 3}
       propertyPath: mpObjPlayArea
       value: 

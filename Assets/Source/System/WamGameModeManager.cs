@@ -1,3 +1,15 @@
+//------------------------------------------------------------------------------//
+//!	@file   WamGameModeManager.cs
+//!	@brief	ゲームモード管理ソース
+//!	@author	立浪豪
+//!	@date	2023/03/17
+//------------------------------------------------------------------------------//
+
+
+//======================================//
+//				Include					//
+//======================================//
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
@@ -8,8 +20,17 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+
+//######################################################################################//
+//!								ゲームモード管理クラス
+//######################################################################################//
+
 public class WamGameModeManager : MonoBehaviour
 {
+    //======================================//
+    //				 デリゲート				//
+    //======================================//
+
     /* デリゲート宣言（スコア変動） */
     public delegate void OnScoreUpdateDelegate( uint Score );
     /* デリゲート定義（スコア変動） */
@@ -20,12 +41,10 @@ public class WamGameModeManager : MonoBehaviour
     /* デリゲート定義（もぐらを叩いた回数変動） */
     public OnMoleSlapCountUpdateDelegate OnMoleSlapCountUpdate;
 
-    /* 背景セット */
-    [field: SerializeField, Label( "背景セット" ), Tooltip( "ゲームプレイ中の背景絵" )]
-    private GameObject[] mpObjBackgroundArtSets;
 
-    /* ランダム選択用数値 */
-    private byte mRandomNumber;
+    //======================================//
+    //		    プライベート変数        	//
+    //======================================//
 
     /* 現在のスコア */
     private uint mCurrentScore;
@@ -33,44 +52,19 @@ public class WamGameModeManager : MonoBehaviour
     /* 現在のもぐらを叩いた回数 */
     private uint mCurrentSlapCount;
 
-    public void Awake( )
-    {
 
-    }
+    //======================================//
+    //		    パブリック関数             	//
+    //======================================//
 
-    // Start is called before the first frame update
-    public void Start( )
-    {
-    }
-
-    /* ゲームモードの初期化をする */
+    //------------------------------------------------------------------------------//
+    //! @brief	初期化処理
+    //------------------------------------------------------------------------------//
     public void Initialize( )
     {
         /* 各種変数初期化 */
-        this.mCurrentScore              = 0;        /* 現在のスコア */
-        this.mCurrentSlapCount          = 0;        /* 現在のもぐらを叩いた回数 */
-
-
-        /* 背景セット個数分ループ */
-        for ( byte i = 0; i < this.mpObjBackgroundArtSets.Length; i++ )
-        {
-            /* 背景セットが空ではない時に */
-            if ( this.mpObjBackgroundArtSets[i] != null )
-            {
-                /* 一旦全ての背景セットを非表示にする */
-                this.mpObjBackgroundArtSets[i].SetActive( false );
-            }
-        }
-
-        /* ランダムで背景セットを選択 */
-        this.mRandomNumber = (byte)Random.Range( 0 , ( this.mpObjBackgroundArtSets.Length - 1 ) );
-
-        /* 背景セットが空ではない時に */
-        if ( this.mpObjBackgroundArtSets[this.mRandomNumber] != null )
-        {
-            /* 背景セットを表示する */
-            this.mpObjBackgroundArtSets[this.mRandomNumber].SetActive( true );
-        }
+        this.mCurrentScore      = 0;    /* 現在のスコア */
+        this.mCurrentSlapCount  = 0;    /* 現在のもぐらを叩いた回数 */
     }
 
     //------------------------------------------------------------------------------//
@@ -85,7 +79,25 @@ public class WamGameModeManager : MonoBehaviour
         this.OnMoleSlapCountUpdate( 0 );
     }
 
-    // Update is called once per frame
+    //------------------------------------------------------------------------------//
+    //! @brief	活動開始時に呼ばれる 
+    //------------------------------------------------------------------------------//
+    public void Awake( )
+    {
+
+    }
+
+    //------------------------------------------------------------------------------//
+    //! @brief	初回更新処理の直前に呼ばれる
+    //------------------------------------------------------------------------------//
+    public void Start( )
+    {
+
+    }
+
+    //------------------------------------------------------------------------------//
+    //! @brief	更新処理
+    //------------------------------------------------------------------------------//
     public void Update( )
     {
         /* もし現在時間が0秒以下なら */
@@ -98,7 +110,9 @@ public class WamGameModeManager : MonoBehaviour
         WamGameInstanceManager.GetInstance( ).GetMoleSpawnManagerInstance( ).SpawnRandomMole( );
     }
 
-    /* スコアを加算する */
+    //------------------------------------------------------------------------------//
+    //! @brief	スコアを加算する
+    //------------------------------------------------------------------------------//
     public void AddScore( ushort Score )
     {
         /* 現在のスコアに倒されたもぐらのスコアを加算 */

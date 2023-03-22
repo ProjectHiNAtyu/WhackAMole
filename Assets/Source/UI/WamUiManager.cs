@@ -27,6 +27,10 @@ public class WamUiManager : MonoBehaviour
     //		プライベートシリアライズ変数	//
     //======================================//
 
+    /* 背景セット */
+    [field: SerializeField, Label( "背景セット" ), Tooltip( "ゲームプレイ中の背景絵" )]
+    private GameObject[] mpObjBackgroundArtSets;
+
     /* 情報ヘッダーUI */
     [field: SerializeField, Label( "情報ヘッダーUI" ), Tooltip( "ゲームプレイ中の情報が表示されるUI" )]
     private GameObject mpObjInfoUI;
@@ -47,6 +51,9 @@ public class WamUiManager : MonoBehaviour
     /* リザルト中かどうか */
     private bool mbResult;
 
+    /* ランダム選択用数値 */
+    private byte mRandomNumber;
+
 
     //======================================//
     //		    パブリック関数             	//
@@ -59,6 +66,35 @@ public class WamUiManager : MonoBehaviour
     {
         /* 各種変数初期化 */
         this.mbResult = false;    /* リザルト中かどうか */
+
+
+        /* 背景セットが１個以上存在している時に */
+        if ( 0 < this.mpObjBackgroundArtSets.Length )
+        {
+            /* 背景セット個数分ループ */
+            for ( byte i = 0; i < this.mpObjBackgroundArtSets.Length; i++ )
+            {
+                /* 背景セットが空ではない時に */
+                if ( this.mpObjBackgroundArtSets[i] != null )
+                {
+                    /* 一旦全ての背景セットを非表示にする */
+                    this.mpObjBackgroundArtSets[i].SetActive( false );
+                }
+            }
+
+            /* 事前に乱数のシード値を変更して、乱数生成の準備を行う */
+            Random.InitState( System.DateTime.Now.Millisecond );
+
+            /* ランダムで背景セットを選択 */
+            this.mRandomNumber = (byte)Random.Range( 0 , ( this.mpObjBackgroundArtSets.Length - 1 ) );
+
+            /* 背景セットが空ではない時に */
+            if ( this.mpObjBackgroundArtSets[this.mRandomNumber] != null )
+            {
+                /* 背景セットを表示する */
+                this.mpObjBackgroundArtSets[this.mRandomNumber].SetActive( true );
+            }
+        }
 
 
         /* 情報ヘッダーUIが空なら */
