@@ -10,14 +10,14 @@ public class WamUiTimer : MonoBehaviour
     public void Start()
     {
         /* ゲームモードクラスのインスタンスが空なら */
-        if ( WamMoleSlapGamemode.GetInstance( ) == null )
+        if ( WamGameInstanceManager.GetInstance( ).GetTimeManagerInstance( ) == null )
         {
-            Debug.Log( "[Error] <WamUiTimer> WamMoleSlapGamemode instance is null." );
+            WamGameInstanceManager.GetInstance( ).GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Error , "WamUiTimer" , "TimeManager instance is null" );
             return;
         }
 
         /* タイマーカウントダウンのデリゲートを登録 */
-        WamMoleSlapGamemode.GetInstance( ).OnTimerCountdown += OnTimerCountdown;
+        WamGameInstanceManager.GetInstance( ).GetTimeManagerInstance( ).OnTimerCountdown += OnTimerCountdown;
     }
 
     // Update is called once per frame
@@ -32,7 +32,7 @@ public class WamUiTimer : MonoBehaviour
         /* このスクリプトがアタッチされているゲームオブジェクトに、テキストメッシュプロUGUIが追加されていない場合 */
         if ( this.GetComponent<TextMeshProUGUI>( ) == null )
         {
-            Debug.Log( "[Error] <WamUiTimer> " + this.name + " is not add TextMeshProUGUI component." );
+            WamGameInstanceManager.GetInstance( ).GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Error , "WamUiTimer" , this.name + " is not add TextMeshProUGUI component" );
             return;
         }
 

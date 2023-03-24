@@ -9,14 +9,14 @@ public class WamUiScore : MonoBehaviour
     public void Start()
     {
         /* ゲームモードクラスのインスタンスが空なら */
-        if ( WamMoleSlapGamemode.GetInstance( ) == null )
+        if ( WamGameInstanceManager.GetInstance( ).GetGameModeManagerInstance( ) == null )
         {
-            Debug.Log( "[Error] <WamUiScore> WamMoleSlapGamemode instance is null." );
+            WamGameInstanceManager.GetInstance( ).GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Error , "WamUiScore" , "GameModeManger instance is null" );
             return;
         }
 
         /* スコア変動のデリゲートを登録 */
-        WamMoleSlapGamemode.GetInstance( ).OnScoreUpdate += OnScoreUpdate;
+        WamGameInstanceManager.GetInstance( ).GetGameModeManagerInstance( ).OnScoreUpdate += OnScoreUpdate;
     }
 
     // Update is called once per frame
@@ -31,7 +31,7 @@ public class WamUiScore : MonoBehaviour
         /* このスクリプトがアタッチされているゲームオブジェクトに、テキストメッシュプロUGUIが追加されていない場合 */
         if ( this.GetComponent<TextMeshProUGUI>( ) == null )
         {
-            Debug.Log( "[Error] <WamUiScore> " + this.name + " is not add TextMeshProUGUI component." );
+            WamGameInstanceManager.GetInstance( ).GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Error , "WamUiScore" , this.name + " is not add TextMeshProUGUI component" );
             return;
         }
 

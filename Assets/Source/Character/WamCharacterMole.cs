@@ -1,3 +1,15 @@
+//------------------------------------------------------------------------------//
+//!	@file   WamCharacterMole.cs
+//!	@brief	もぐらキャラクターソース
+//!	@author	立浪豪
+//!	@date	2023/03/18
+//------------------------------------------------------------------------------//
+
+
+//======================================//
+//				Include					//
+//======================================//
+
 using System.Collections;
 using System.Collections.Generic;
 using UniRx;
@@ -5,8 +17,17 @@ using UniRx.Triggers;
 using Unity.VisualScripting;
 using UnityEngine;
 
+
+//######################################################################################//
+//!								もぐらキャラクタークラス
+//######################################################################################//
+
 public class WamCharacterMole : MonoBehaviour
 {
+    //======================================//
+    //		プライベートシリアライズ変数	//
+    //======================================//
+
     /* タップターゲット（もぐら） */
     [field: SerializeField, Label( "タップターゲット（もぐら）" ), Tooltip( "タップで倒す事が可能なもぐらオブジェクト" )]
     private GameObject mpObjMoleTapTarget;
@@ -35,6 +56,11 @@ public class WamCharacterMole : MonoBehaviour
     [field: SerializeField, Label( "放置ステートから遷移開始するまでの最大延長時間" ), Tooltip( "放置ステートから遷移開始するまでの最大延長時間で、最小時間にランダムで加算される" ), Range( 0.0f , 100.0f )]
     private float mStateIdleWaitTimeMaxExt;
 
+
+    //======================================//
+    //		    プライベート変数        	//
+    //======================================//
+
     /* アニメーター */
     private Animator mpAnimator;
 
@@ -53,7 +79,14 @@ public class WamCharacterMole : MonoBehaviour
     /* もぐらが倒されたかどうか */
     private bool mbDefeat;
 
-    // Start is called before the first frame update
+
+    //======================================//
+    //		    パブリック関数             	//
+    //======================================//
+
+    //------------------------------------------------------------------------------//
+    //! @brief	初回更新処理の直前に呼ばれる
+    //------------------------------------------------------------------------------//
     public void Start()
     {
         /* 自身に設定されているアニメーターコンポーネントを取得 */
@@ -117,7 +150,9 @@ public class WamCharacterMole : MonoBehaviour
         this.mStateIdleWaitTimeRandomExt = Random.Range( 0.0f , this.mStateIdleWaitTimeMaxExt );
     }
 
-    // Update is called once per frame
+    //------------------------------------------------------------------------------//
+    //! @brief	更新処理
+    //------------------------------------------------------------------------------//
     public void Update()
     {
         /* アニメーションが空の場合 */
@@ -158,7 +193,9 @@ public class WamCharacterMole : MonoBehaviour
         }
     }
 
-    /* タップターゲットがタップされた時のイベント */
+    //------------------------------------------------------------------------------//
+    //! @brief	タップターゲットがタップされた時のイベント
+    //------------------------------------------------------------------------------//
     public void TappedMoleEvent( )
     {
         /* 既にもぐらがタップされて倒されている場合、処理しない */
@@ -174,13 +211,13 @@ public class WamCharacterMole : MonoBehaviour
         this.mpAnimator.SetInteger( this.mParameterNameStateChange , 2 );
 
         /* ゲームモードクラスのインスタンスが空なら */
-        if ( WamMoleSlapGamemode.GetInstance( ) == null )
+        if ( WamGameInstanceManager.GetInstance( ).GetGameModeManagerInstance( ) == null )
         {
-            Debug.Log( "[Error] <WamCharacterMole> WamMoleSlapGamemode instance is null." );
+            WamGameInstanceManager.GetInstance( ).GetDebugManagerInstance( ).ShowDebugLogTemplate( WamDebugManager.EWamLogType.Error , "WamCharacterMole" , "GameModeManger instance is null" );
             return;
         }
 
         /* スコアを加算する */
-        WamMoleSlapGamemode.GetInstance( ).AddScore( this.mDefeatedScore );
+        WamGameInstanceManager.GetInstance( ).GetGameModeManagerInstance( ).AddScore( this.mDefeatedScore );
     }
 }
